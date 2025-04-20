@@ -1,0 +1,13 @@
+{
+    "WINDOW_LARGURA": 800,
+    "WINDOW_ALTURA": 600,
+    "GRAVIDADE": -1.5,
+    "MURO_LARGURA": 100,
+    "MURO_SPEED": 5,
+    "CHINELO_JUMP": 10,
+    "CHINELO_LARGURA": 32,
+    "CHINELO_ALTURA": 48,
+    "GAP": 200,
+    "VIDAS": 3,
+    "IMUNIDADE": 2
+}
