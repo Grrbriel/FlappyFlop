@@ -88,10 +88,10 @@ class Game:
                 if self.vidas == 0:
                     self.jogando = False
 
-            for item in self.itens:
-                item.update(self.delta_time)
-                if item.colidiu(self.chinelo):
-                    self.vidas += 1
+        for item in self.itens:
+            item.update(self.delta_time)
+            if item.colidiu(self.chinelo):
+                self.vidas += 1
 
         fundo_vel = self.config["MURO_SPEED"] * 0.25 * 60
         self.fundo_pos += fundo_vel * self.delta_time
