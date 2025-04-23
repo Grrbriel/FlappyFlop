@@ -10,24 +10,26 @@ class Coletavel:
         self.reset()
 
     def reset(self):
-        self.x = self.config["WINDOW_LARGURA"] + 10000
-        self.y = random.randint(50, self.config["WINDOW_ALTURA"] - 50)
+        self.xpos = self.config["WINDOW_LARGURA"] + 2500
+        self.ypos = random.randint(50, self.config["WINDOW_ALTURA"] - 50)
         self.coletado = False
 
     def update(self, delta_time):
-        self.x -= self.config["MURO_SPEED"] * delta_time * 60
-        if self.x + self.largura < 0:
+        self.xpos -= self.config["ITEM_SPEED"] * delta_time * 60
+        if self.xpos + self.largura < 0:
             self.reset()
 
     def colidiu(self, chinelo):
+        cx, cy, cl, ca = chinelo.xpos, chinelo.ypos, chinelo.largura, chinelo.altura
         if self.coletado:
             return False
 
-        cx, cy, cw, ch = chinelo.xpos, chinelo.ypos, chinelo.largura, chinelo.altura
-        if (self.x < cx + cw and self.x + self.largura > cx and
-            self.y < cy + ch and self.y + self.altura > cy):
-            self.coletado = True
-            return True
+        # Testa colisão horizontal - somar largura e depois checar altura
+        if (cx + cl > self.xpos) and (cx < self.xpos + self.largura):
+            if cy + ca > self.ypos and cy < self.ypos + self.altura:
+                self.coletado = True
+                return True
+
         return False
 
     def renderizar(self):
@@ -42,13 +44,13 @@ class Coletavel:
 
         glBegin(GL_QUADS)
         glTexCoord2f(0, 0)
-        glVertex2f(self.x, self.y)
+        glVertex2f(self.xpos, self.ypos)
         glTexCoord2f(1, 0)
-        glVertex2f(self.x + self.largura, self.y)
+        glVertex2f(self.xpos + self.largura, self.ypos)
         glTexCoord2f(1, 1)
-        glVertex2f(self.x + self.largura, self.y + self.altura)
+        glVertex2f(self.xpos + self.largura, self.ypos + self.altura)
         glTexCoord2f(0, 1)
-        glVertex2f(self.x, self.y + self.altura)
+        glVertex2f(self.xpos, self.ypos + self.altura)
         glEnd()
 
         glDisable(GL_TEXTURE_2D)

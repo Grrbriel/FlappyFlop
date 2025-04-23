@@ -16,8 +16,8 @@ class Muro:
     def reset(self):
         self.ultrapassado = False
         total_altura = self.config["WINDOW_ALTURA"]
-        self.altura_chao = random.randint(100, total_altura - self.gap - 100)
-        self.topo_y = self.altura_chao + self.gap
+        self.muro_inferior_altura = random.randint(100, total_altura - self.gap - 100)
+        self.muro_superior_y = self.muro_inferior_altura + self.gap
 
     def update(self, delta_time):
         self.xpos -= self.velocidade * delta_time * 60
@@ -28,13 +28,13 @@ class Muro:
     def colidiu(self, chinelo):
         cx, cy, cl, ca = chinelo.xpos, chinelo.ypos, chinelo.largura, chinelo.altura
 
-        # Testa colisão horizontal (mesmo intervalo X)
+        # Testa colisão horizontal - somar largura e depois checar altura
         if (cx + cl > self.xpos) and (cx < self.xpos + self.largura):
-            # Testa colisão com muro superior
-            if cy < self.altura_chao:
-                return True
             # Testa colisão com muro inferior
-            if cy + ca > self.topo_y:
+            if cy < self.muro_inferior_altura:
+                return True
+            # Testa colisão com muro superior
+            if cy + ca > self.muro_superior_y:
                 return True
         return False
 
@@ -45,24 +45,24 @@ class Muro:
         glBindTexture(GL_TEXTURE_2D, self.textura)
         glColor4f(1, 1, 1, 1)
 
-        # Muro cima
+        # Muro baixo
         glBegin(GL_QUADS)
         glTexCoord2f(0, 0)
         glVertex2f(self.xpos, 0)
         glTexCoord2f(1, 0)
         glVertex2f(self.xpos + self.largura, 0)
         glTexCoord2f(1, 1)
-        glVertex2f(self.xpos + self.largura, self.altura_chao)
+        glVertex2f(self.xpos + self.largura, self.muro_inferior_altura)
         glTexCoord2f(0, 1)
-        glVertex2f(self.xpos, self.altura_chao)
+        glVertex2f(self.xpos, self.muro_inferior_altura)
         glEnd()
 
-        # Muro baixo
+        # Muro cima
         glBegin(GL_QUADS)
         glTexCoord2f(0, 0)
-        glVertex2f(self.xpos, self.topo_y)
+        glVertex2f(self.xpos, self.muro_superior_y)
         glTexCoord2f(1, 0)
-        glVertex2f(self.xpos + self.largura, self.topo_y)
+        glVertex2f(self.xpos + self.largura, self.muro_superior_y)
         glTexCoord2f(1, 1)
         glVertex2f(self.xpos + self.largura, self.config["WINDOW_ALTURA"])
         glTexCoord2f(0, 1)

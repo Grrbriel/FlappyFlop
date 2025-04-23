@@ -9,5 +9,6 @@
     "CHINELO_ALTURA": 48,
     "GAP": 200,
     "VIDAS": 3,
-    "IMUNIDADE": 2
+    "IMUNIDADE": 2,
+    "ITEM_SPEED": 2
 }

@@ -12,6 +12,7 @@ class Game:
 
         self.pontos = 0
         self.jogando = True
+        self.inMenu = True
         self.config = carregar_config()
         self.vidas = self.config["VIDAS"]
         self.window = init_window(self.config["WINDOW_LARGURA"], self.config["WINDOW_ALTURA"])
@@ -21,7 +22,7 @@ class Game:
         self.img_fundo = carrega_textura("assets/background2.png")
         self.fundo_pos = 0  # posição horizontal do fundo
 
-        self.game_over_img = carrega_textura("assets/gameover.png")
+        self.game_over_img = carrega_textura("assets/gameover2.png")
         self.chinelo_img = carrega_textura("assets/chinelo.png")
         self.muro_img = carrega_textura("assets/muro.png")
         self.numero_img = carregar_numeros("assets/digitos/")
@@ -59,8 +60,15 @@ class Game:
         if glfw.get_key(self.window, glfw.KEY_ESCAPE) == glfw.PRESS:
             glfw.set_window_should_close(self.window, True)
 
+        if glfw.get_key(self.window, glfw.KEY_ENTER) == glfw.PRESS:
+            self.inMenu = False
+
+
     def update(self):
         if not self.jogando:
+            return
+
+        if self.inMenu:
             return
 
         self.chinelo.update(self.delta_time)
@@ -85,7 +93,7 @@ class Game:
                 if item.colidiu(self.chinelo):
                     self.vidas += 1
 
-        fundo_vel = self.config["MURO_SPEED"] * 0.25 * 60  # pixels por segundo
+        fundo_vel = self.config["MURO_SPEED"] * 0.25 * 60
         self.fundo_pos += fundo_vel * self.delta_time
 
         # reset no loop
@@ -94,6 +102,10 @@ class Game:
             self.fundo_pos -= fundo_largura
 
     def render(self):
+        if self.inMenu:
+            self.renderizar_menu()
+            return
+
         self.renderizar_fundo()
         self.chinelo.renderizar()
 
@@ -111,25 +123,45 @@ class Game:
             self.renderizar_pontos()
             self.renderizar_vidas()
 
+    def renderizar_menu(self):
+        glEnable(GL_TEXTURE_2D)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glBindTexture(GL_TEXTURE_2D, carrega_textura("assets/menu.png"))
+        glColor4f(1, 1, 1, 1)
+
+        largura = self.config["WINDOW_LARGURA"]
+        altura = self.config["WINDOW_ALTURA"]
+
+        glBegin(GL_QUADS)
+        glTexCoord2f(0, 0)
+        glVertex2f(0, 0)
+        glTexCoord2f(1, 0)
+        glVertex2f(0 + largura, 0)
+        glTexCoord2f(1, 1)
+        glVertex2f(0 + largura, altura)
+        glTexCoord2f(0, 1)
+        glVertex2f(0, altura)
+        glEnd()
+        return
 
     def renderizar_gameover(self):
-        go_largura, go_altura = 400, 200
-        x = (self.config["WINDOW_LARGURA"] - go_largura) / 2
-        y = (self.config["WINDOW_ALTURA"] - go_altura) / 2
-
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.game_over_img)
         glColor3f(1.0, 1.0, 1.0)
 
+        largura = self.config["WINDOW_LARGURA"]
+        altura = self.config["WINDOW_ALTURA"]
+
         glBegin(GL_QUADS)
         glTexCoord2f(0, 0)
-        glVertex2f(x, y)
+        glVertex2f(0, 0)
         glTexCoord2f(1, 0)
-        glVertex2f(x + go_largura, y)
+        glVertex2f(0 + largura, 0)
         glTexCoord2f(1, 1)
-        glVertex2f(x + go_largura, y + go_altura)
+        glVertex2f(0 + largura, altura)
         glTexCoord2f(0, 1)
-        glVertex2f(x, y + go_altura)
+        glVertex2f(0, altura)
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
@@ -191,7 +223,7 @@ class Game:
 
         # Desenha o número de vidas
         for digito in numero:
-            img, _, _ = self.numero_img[int(digito)] # precisa do _ para ignorar atributo da tupla
+            img, largura, altura = self.numero_img[int(digito)]
             glEnable(GL_TEXTURE_2D)
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -225,7 +257,7 @@ class Game:
         altura = self.config["WINDOW_ALTURA"]
         offset = -self.fundo_pos
 
-        for i in range(2):  # desenha duas vezes, lado a lado
+        for i in range(2):  # desenha duas vezes, lado a lado - o offset precisa ser negativo por algum motivo
             x = offset + i * largura
             glBegin(GL_QUADS)
             glTexCoord2f(0, 0)

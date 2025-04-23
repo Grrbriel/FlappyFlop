@@ -52,7 +52,7 @@ class Chinelo:
     #   GIRA 30 GRAUS A CADA INTERAÇÃO
     def pular(self):
         self.velocidade = self.pulo
-        self.giro -= 30  # rotação horária (positivo)
+        self.giro -= 30  # rotação horária ?
 
     #   CENTRALIZA ROTAÇÃO DO CHINELO
     #   APLICA TEXTURA E BLENDING PARA TIRAR FUNDO PRETO BUGADO
