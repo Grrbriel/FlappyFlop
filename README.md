@@ -6,6 +6,7 @@ Jogo inspirado no Flappy Bird, controle um chinelo voando entre muros.
 - PyOpenGL
 - GLFW
 - Pillow
+- Numpy
 
 ## Como jogar
 - Pressione espaço para fazer o chinelo subir
